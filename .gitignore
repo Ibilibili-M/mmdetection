@@ -123,3 +123,8 @@ work_dirs/
 *.py~
 *.sh~
 /datasets
+
+/demo/__MACOSX
+/demo/balloon
+/demo/balloon_dataset.zip
+
