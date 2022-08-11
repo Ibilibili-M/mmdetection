@@ -58,6 +58,14 @@ model = dict(
 optimizer = dict(type='SGD', lr=0.01, momentum=0.9, weight_decay=0.0001)
 optimizer_config = dict(
     _delete_=True, grad_clip=dict(max_norm=35, norm_type=2))
+# learning policy
+lr_config = dict(
+    policy='step',
+    warmup='linear',
+    warmup_iters=500,
+    warmup_ratio=0.001,
+    step=[8, 11])
+runner = dict(type='EpochBasedRunner', max_epochs=50)
 
 # dataset settings
 dataset_type = 'CocoDataset'
@@ -113,3 +121,26 @@ data = dict(
         pipeline=test_pipeline))
 evaluation = dict(metric=['bbox', 'segm'])
 
+# Set evaluation interval
+evaluation = dict(interval=20)
+# Set checkpoint interval
+checkpoint_config = dict(interval=20)
+
+# yapf:disable
+log_config = dict(
+    interval=20,
+    hooks=[
+        dict(type='TextLoggerHook'),
+        dict(type='MMDetWandbHook',
+             init_kwargs={
+                 'project': 'potato',
+                 'group': 'top-camera',
+                 'name': 'solov2_r50_fpn_1x_top_camera.py'
+             },
+             interval=20,
+             log_checkpoint=True,
+             log_checkpoint_metadata=True,
+             num_eval_images=100)
+    ])
+
+auto_scale_lr = dict(enable=False, base_batch_size=16)
